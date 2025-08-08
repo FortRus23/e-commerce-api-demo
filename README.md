@@ -40,7 +40,7 @@ REST API для интернет-магазина с поддержкой рег
 
 
 # Сборка образа
-docker build -t task-tracker-app .
+docker build -t e-commerce-api .
 
 # Запуск
 docker-compose up -d
