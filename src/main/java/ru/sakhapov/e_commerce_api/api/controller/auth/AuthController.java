@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sakhapov.e_commerce_api.api.exception.BadRequestException;
+import ru.sakhapov.e_commerce_api.api.exception.UsernameAlreadyExistsException;
 import ru.sakhapov.e_commerce_api.store.repository.UserRepository;
 import ru.sakhapov.e_commerce_api.store.service.AuthenticationService;
 
@@ -31,9 +31,8 @@ public class AuthController {
             @Valid @RequestBody RegisterRequest request) {
 
         if (repository.existsByUsername(request.getUsername())) {
-            throw new BadRequestException(
-                    String.format("Account with this username '%s' already exists.", request.getUsername())
-            );
+            throw new UsernameAlreadyExistsException(request.getUsername());
+
         }
 
         return ResponseEntity.ok(service.register(request));

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Map;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,4 +17,6 @@ public class ErrorDto {
 
     @JsonProperty("error_description")
     String errorDescription;
+
+    private Map<String, String> validationErrors;
 }

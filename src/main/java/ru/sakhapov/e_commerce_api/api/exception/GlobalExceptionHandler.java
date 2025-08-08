@@ -9,21 +9,27 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.sakhapov.e_commerce_api.api.dto.ErrorDto;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDto> handleValidationError(MethodArgumentNotValidException ex) {
-        String message = ex.getBindingResult()
+        Map<String, String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .findFirst()
-                .map(FieldError::getDefaultMessage)
-                .orElse("Validation error");
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        FieldError::getDefaultMessage,
+                        (existing, replacement) -> existing
+                ));
 
         ErrorDto errorDto = ErrorDto.builder()
                 .error("validation_error")
-                .errorDescription(message)
+                .errorDescription("Validation failed")
+                .validationErrors(errors)
                 .build();
 
         return ResponseEntity.badRequest().body(errorDto);
@@ -57,6 +63,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDto> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         ErrorDto errorDto = new ErrorDto();
         errorDto.setError("User not found");
+        errorDto.setErrorDescription(ex.getMessage());
+        return ResponseEntity.badRequest().body(errorDto);
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<ErrorDto> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setError("Username already exist");
         errorDto.setErrorDescription(ex.getMessage());
         return ResponseEntity.badRequest().body(errorDto);
     }
