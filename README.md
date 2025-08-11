@@ -11,7 +11,7 @@ REST API для интернет-магазина с поддержкой рег
 
     Spring Data JPA + Hibernate
 
-    PostgreSQL (можно заменить на H2 для тестов)
+    PostgreSQL
 
     Maven
 
